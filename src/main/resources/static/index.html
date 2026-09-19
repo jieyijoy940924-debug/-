@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投資人風險偏好與屬性問卷</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 30px; background-color: #f8f9fa; color: #333; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1, h2 { color: #1a365d; text-align: center; }
+        .question-group { margin-bottom: 20px; padding: 15px; border-left: 4px solid #3182ce; background: #ebf8ff; border-radius: 4px; }
+        label { font-weight: bold; display: block; margin-bottom: 8px; }
+        select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e0; font-size: 16px; }
+        button { width: 100%; padding: 12px; background-color: #3182ce; color: white; border: none; border-radius: 6px; font-size: 18px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        button:hover { background-color: #2b6cb0; }
+        #resultSection { display: none; margin-top: 30px; }
+        .chart-container { width: 100%; max-width: 500px; margin: 20px auto; }
+        .advice-box { background: #f0fff4; border: 1px solid #9ae6b4; padding: 20px; border-radius: 8px; margin-top: 20px; }
+        .advice-box h3 { color: #276749; margin-top: 0; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>投資人風險偏好與屬性問卷</h1>
+    <form id="quizForm">
+        <!-- 1. 年齡區間 -->
+        <div class="question-group">
+            <label for="ageGroup">1. 您的年齡層區間？</label>
+            <select id="ageGroup" required>
+                <option value="under_30">30 歲以下（投資期限長、風險承受力高）</option>
+                <option value="30_50">30 - 50 歲（黃金積累期）</option>
+                <option value="50_65">50 - 65 歲（臨近退休）</option>
+                <option value="over_65">65 歲以上（退休期、注重資產保全）</option>
+            </select>
+        </div>
+
+        <!-- 2. 收入與現金流 -->
+        <div class="question-group">
+            <label for="incomeStatus">2. 您的職業與未來現金流穩定度？</label>
+            <select id="incomeStatus" required>
+                <option value="very_stable">非常穩定（如公教人員、大型企業，現金流非常充沛）</option>
+                <option value="stable">穩定（一般上班族，有固定薪資收入）</option>
+                <option value="unstable">波動較大（自由業者、業務佣金、創業中）</option>
+                <option value="no_income">無固定收入（主要依賴過去積蓄或投資收益）</option>
+            </select>
+        </div>
+
+        <!-- 3. 可投資資產規模 -->
+        <div class="question-group">
+            <label for="assetScale">3. 您目前可用於投資的金融資產規模（不含自住房地產）？</label>
+            <select id="assetScale" required>
+                <option value="low">50 萬元新台幣以下</option>
+                <option value="medium">50 萬 - 200 萬元新台幣</option>
+                <option value="high">200 萬 - 1000 萬元新台幣</option>
+                <option value="very_high">1000 萬元新台幣以上</option>
+            </select>
+        </div>
+
+        <!-- 4. 投資期限 -->
+        <div class="question-group">
+            <label for="investmentHorizon">4. 您這筆資金預計可以持續投資多久而不動用？</label>
+            <select id="investmentHorizon" required>
+                <option value="short">1 年以內（短期交易 / 資金規劃）</option>
+                <option value="medium_short">1 - 3 年（中短期目標）</option>
+                <option value="medium_long">3 - 7 年（中長期佈局）</option>
+                <option value="long">7 年以上（長期財富增值 / 退休規劃）</option>
+            </select>
+        </div>
+
+        <!-- 5. 流動性需求 -->
+        <div class="question-group">
+            <label for="liquidityNeed">5. 您在未來 1~2 年內是否有大型資金支出需求（如購屋、結婚、留學）？</label>
+            <select id="liquidityNeed" required>
+                <option value="high">有明確且緊急的大額支出需求（高流動性需求）</option>
+                <option value="medium">可能會有部分臨時支出（中等流動性需求）</option>
+                <option value="low">無明確大額支出，資金可長期鎖定（低流動性需求）</option>
+            </select>
+        </div>
+
+        <!-- 6. 負債狀況 -->
+        <div class="question-group">
+            <label for="debtStatus">6. 您目前的個人負債狀況（如房貸、車貸、信貸等）？</label>
+            <select id="debtStatus" required>
+                <option value="none">完全無負債</option>
+                <option value="light">輕微負債（每月還款低於收入 20%）</option>
+                <option value="moderate">中等負債（每月還款佔收入 20% - 40%）</option>
+                <option value="heavy">高負債壓力（每月還款超過收入 40%）</option>
+            </select>
+        </div>
+
+        <!-- 7. 投資經驗與知識 -->
+        <div class="question-group">
+            <label for="investmentExperience">7. 您的投資經驗與專業知識程度？</label>
+            <select id="investmentExperience" required>
+                <option value="novice">新手（僅存定期存款或儲蓄險）</option>
+                <option value="intermediate">初學者（有買過基金、ETF 或台股經驗）</option>
+                <option value="advanced">中階（了解個股分析、財務報表與資產配置）</option>
+                <option value="expert">資深（熟悉衍生性商品、期權、槓桿操作與避險）</option>
+            </select>
+        </div>
+
+        <!-- 8. 市場下跌反應 (損失承受度) -->
+        <div class="question-group">
+            <label for="marketDropReaction">8. 若您的投資組合在一個月內下跌 20%，您的第一反應是？</label>
+            <select id="marketDropReaction" required>
+                <option value="sell_all">極度焦慮，立刻全數停損出場</option>
+                <option value="sell_part">相當不安，賣出部分減輕壓力</option>
+                <option value="hold">冷靜觀察，繼續持有等待回升</option>
+                <option value="buy_more">視為加碼時機，逢低分批加碼</option>
+            </select>
+        </div>
+
+        <button type="button" onclick="submitQuiz()">開始評估分析</button>
+    </form>
+
+    <div id="resultSection">
+        <h2>您的風險屬性雷達圖分析</h2>
+        <div class="chart-container">
+            <canvas id="radarChart"></canvas>
+        </div>
+        <div class="advice-box">
+            <h3>理財機器人診斷與建議</h3>
+            <p id="adviceText"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let myRadarChart = null;
+
+    function submitQuiz() {
+        const payload = {
+            ageGroup: document.getElementById('ageGroup').value,
+            incomeStatus: document.getElementById('incomeStatus').value,
+            assetScale: document.getElementById('assetScale').value,
+            investmentHorizon: document.getElementById('investmentHorizon').value,
+            liquidityNeed: document.getElementById('liquidityNeed').value,
+            debtStatus: document.getElementById('debtStatus').value,
+            investmentExperience: document.getElementById('investmentExperience').value,
+            marketDropReaction: document.getElementById('marketDropReaction').value
+        };
+
+        fetch('/api/quiz/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('resultSection').style.display = 'block';
+            document.getElementById('adviceText').innerText = data.advice;
+            renderChart(data.scores);
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        })
+        .catch(err => {
+            alert('系統分析失敗，請檢查後端是否啟動');
+            console.error(err);
+        });
+    }
+
+    function renderChart(scores) {
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        if (myRadarChart) { myRadarChart.destroy(); }
+
+        myRadarChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['風險承受力', '損失偏好度', '資金流動性', '資產與能力'],
+                datasets: [{
+                    label: '個人評估分數 (0 - 100)',
+                    data: [
+                        scores.riskCapacity,
+                        scores.lossTolerance,
+                        scores.liquidityPreference,
+                        scores.financialCapability
+                    ],
+                    backgroundColor: 'rgba(49, 130, 206, 0.2)',
+                    borderColor: 'rgba(49, 130, 206, 1)',
+                    pointBackgroundColor: 'rgba(49, 130, 206, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        min: 0,
+                        max: 100,
+                        ticks: { stepSize: 20 }
+                    }
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>
